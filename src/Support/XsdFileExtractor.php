@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Endeavors\Fhir\Support;
 
 use Endeavors\Fhir\Support\Contracts;
 use Endeavors\Fhir\Support\File;
-use Chumper\Zipper\Zipper;
+use Endeavors\Fhir\Support\Zipper;
 
 class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\ZipArchiveInterface
 {
@@ -68,24 +70,27 @@ class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\Zi
         return new static(new Zipper());
     }
 
-    public function extract(string $location, string $zipFile, array $files = [])
+    public function extract(string $location, string $zipFile, array $files = []): string
     {
-        $this->makeZip($zipFile);
+        if ($this->makeZip($zipFile)) {
 
-        $this->zipper->extractTo($location, $files);
-        // we'll assume all files?
-        if (count($files) === 0) {
-            $fileNames = [];
+            $this->zipper->extractTo($location, $files);
+            // we'll assume all files?
+            if (count($files) === 0) {
+                $fileNames = [];
 
-            foreach($this->allFiles($zipFile) as $file) {
-                $fileNames[] = $file->exactName();
+                foreach($this->allFiles($zipFile) as $file) {
+                    $fileNames[] = $file->exactName();
+                }
+
+                $this->zipper->extractTo($location, $fileNames, 1);
             }
 
-            $this->zipper->extractTo($location, $fileNames, 1);
+            //$this->zipper->close();
+            return $location;
         }
 
-        //$this->zipper->close();
-        return $location;
+        return "";
     }
 
     public function extractAll(string $location, string $zipFile)
@@ -130,17 +135,20 @@ class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\Zi
         return $fileNames;
     }
 
-    protected function makeZip($path)
+    protected function makeZip($path): bool
     {
-        if (false === $this->isZipped) {
-            try {
-                $this->zipper->make($path);
+        $zipped = false;
 
-                $this->isZipped = true;
-            } catch(\Throwable $ex) {
+        try {
+            $this->zipper->make($path);
 
-            }
+            $zipped = true;
+        } catch(\Exception $ex) {
+            $zipped = false;
+        } catch(\Throwable $ex) {
+            $zipped = false;
+        } finally {
+            return $zipped;
         }
     }
-
 }
