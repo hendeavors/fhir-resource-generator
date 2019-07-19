@@ -9,6 +9,8 @@ use Exception;
 use Throwable;
 use Endeavors\Fhir\GeneratorException;
 use Endeavors\Fhir\GeneratorResponse;
+use Endeavors\Fhir\Support\Contracts\ZipExtractionInterface;
+use Endeavors\Fhir\Support\ExistingFile;
 
 class FhirClassGenerator
 {
@@ -16,11 +18,24 @@ class FhirClassGenerator
 
     public function __construct(string $xsdPath)
     {
-        $this->generator = new Generator($xsdPath);
+        $existingFile = ExistingFile::create($xsdPath);
+
+        $this->generator = new Generator($existingFile->get());
+    }
+
+    public static function create(string $xsdPath)
+    {
+        return new static($xsdPath);
+    }
+
+    public static function fromZip(ZipExtractionInterface $extractor, string $sourceFile)
+    {
+        return static::create($extractor->extractAll($sourceFile));
     }
 
     public function generate()
     {
+        // try extracting, if fails download from url?
         $ex = null;
 
         try {

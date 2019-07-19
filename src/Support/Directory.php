@@ -2,12 +2,7 @@
 
 namespace Endeavors\Fhir\Support;
 
-use Endeavors\Fhir\Support\Contracts\FilePathInterface;
-
-/**
- * Handle file existence creation
- */
-class File implements FilePathInterface
+class Directory
 {
     private $fileSystem;
 
@@ -19,8 +14,8 @@ class File implements FilePathInterface
 
         $this->fileSystem = new \Illuminate\Filesystem\Filesystem;
 
-        if ($this->fileSystem->isDirectory($path)) {
-            throw new \InvalidArgumentException(sprintf("The specific file, %s, cannot be a directory.", $path));
+        if ($this->fileSystem->isFile($path)) {
+            throw new \InvalidArgumentException(sprintf("The specific directory, %s, cannot be a file.", $path));
         }
     }
 
@@ -34,16 +29,6 @@ class File implements FilePathInterface
         return $this->fileSystem->name($this->path);
     }
 
-    public function exactName()
-    {
-        return $this->fileSystem->basename($this->path);
-    }
-
-    public function extension()
-    {
-        return $this->fileSystem->extension($this->path);
-    }
-
     public function exists()
     {
         return $this->fileSystem->exists($this->path);
@@ -54,13 +39,18 @@ class File implements FilePathInterface
         return !$this->exists();
     }
 
-    public function get(): string
+    public function make()
     {
-        return (string)$this->path;
+        if (false === $this->exists()) {
+            // create the directory
+            return $this->fileSystem->makeDirectory($this->path, 0755, true, true);
+        }
+
+        return false;
     }
 
-    public function __toString()
+    public function remove()
     {
-        return $this->get();
+        return $this->fileSystem->deleteDirectory($this->path);
     }
 }

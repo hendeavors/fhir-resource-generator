@@ -6,7 +6,10 @@ namespace Endeavors\Fhir\Support;
 
 use Endeavors\Fhir\Support\Contracts;
 use Endeavors\Fhir\Support\File;
+use Endeavors\Fhir\Support\Directory;
 use Endeavors\Fhir\Support\Zipper;
+use Endeavors\Fhir\InvalidSourceFileException;
+use Endeavors\Fhir\InvalidDestinationDirectoryException;
 
 class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\ZipArchiveInterface
 {
@@ -34,31 +37,7 @@ class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\Zi
     //  */
     // const EXACT_MATCH = 4;
     //
-    // public function extractTo($path, array $files = [], $methodFlags = self::BLACKLIST)
-    // {
-    //     if (!$this->file->exists($path) && !$this->file->makeDirectory($path, 0755, true)) {
-    //         throw new \RuntimeException('Failed to create folder');
-    //     }
-    //
-    //     if ($methodFlags & self::EXACT_MATCH) {
-    //         $matchingMethod = function ($haystack) use ($files) {
-    //             return in_array($haystack, $files, true);
-    //         };
-    //     } else {
-    //         $matchingMethod = function ($haystack) use ($files) {
-    //             return starts_with($haystack, $files);
-    //         };
-    //     }
-    //
-    //     if ($methodFlags & self::WHITELIST) {
-    //         $this->extractFilesInternal($path, $matchingMethod);
-    //     } else {
-    //         // blacklist - extract files that do not match with $matchingMethod
-    //         $this->extractFilesInternal($path, function ($filename) use ($matchingMethod) {
-    //             return !$matchingMethod($filename);
-    //         });
-    //     }
-    // }
+
 
     public function __construct(Zipper $zipper)
     {
@@ -74,8 +53,10 @@ class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\Zi
 
     public function sourceDirectory(string $sourceDirectory)
     {
-        if (!is_dir($sourceDirectory)) {
-            throw new \InvalidArgumentException(sprintf("The directory, %s, is invalid. Please ensure you have a valid directory and try again.", $sourceDirectory));
+        Directory::create($sourceDirectory)->make();
+
+        if (Directory::create($sourceDirectory)->doesntExist()) {
+            throw new InvalidSourceFileException(sprintf("The source directory, %s, is invalid. Please ensure you have a valid directory and try again.", $sourceDirectory));
         }
 
         $this->sourceDirectory = $this->cleanDirectory($sourceDirectory);
@@ -83,17 +64,29 @@ class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\Zi
         return $this;
     }
 
+    public function getSourceDirectory()
+    {
+        return Directory::create($this->sourceDirectory ?? "");
+    }
+
     private $destinationDirectory;
 
     public function destinationDirectory(string $destinationDirectory)
     {
-        if (!is_dir($destinationDirectory)) {
-            throw new \InvalidArgumentException(sprintf("The directory, %s, is invalid. Please ensure you have a valid directory and try again.", $destinationDirectory));
+        Directory::create($destinationDirectory)->make();
+
+        if (Directory::create($destinationDirectory)->doesntExist()) {
+            throw new InvalidDestinationDirectoryException(sprintf("The destination directory, %s, is invalid. Please ensure you have a valid directory and try again.", $destinationDirectory));
         }
 
         $this->destinationDirectory = $this->cleanDirectory($destinationDirectory);
 
         return $this;
+    }
+
+    public function getDestinationDirectory()
+    {
+        return Directory::create($this->destinationDirectory ?? "");
     }
 
     protected function cleanDirectory(string $directory)
@@ -107,51 +100,38 @@ class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\Zi
         return $directory;
     }
 
-    public function extract(string $location, string $zipFile, array $files = []): string
+    public function extract(string $zipFile, array $files = []): string
     {
         $zipFile = $this->sourceDirectory . $zipFile;
 
-        $location = $this->destinationDirectory . $location;
+        $zipFile = File::create($zipFile);
+
+        $location = $this->destinationDirectory;
 
         $this->makeZip($zipFile);
+
+        if ($zipFile->doesntExist()) {
+            throw InvalidSourceFileException::invalidSourceFile($zipFile);
+        }
 
         $this->zipper->extractTo($location, $files);
         // we'll assume all files?
         if (count($files) === 0) {
             $fileNames = [];
 
-            foreach ($this->allFiles($zipFile) as $file) {
+            foreach ($this->allFiles($zipFile->get()) as $file) {
                 $fileNames[] = $file->exactName();
             }
 
             $this->zipper->extractTo($location, $fileNames, 1);
         }
 
-        //$this->zipper->close();
         return $location;
     }
 
-    public function extractAll(string $location, string $zipFile)
+    public function extractAll(string $zipFile)
     {
-        return $this->extract($location, $zipFile);
-    }
-
-    public function extractOnly(string $location, string $zipFile, array $files = [])
-    {
-        $this->makeZip($zipFile);
-
-        $this->zipper->extractTo($location, $zipFile, $files, 1);
-
-        //$this->zipper->close();
-    }
-
-    public function extractExcept(string $location, string $zipFile, array $files = [])
-    {
-        $this->makeZip($zipFile);
-
-        $this->zipper->extractTo($location, $zipFile, $files, 2);
-
-        //$this->zipper->close();
+        return $this->extract($zipFile);
     }
 
     public function allFiles(string $zipFile): array

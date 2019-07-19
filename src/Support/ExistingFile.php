@@ -2,25 +2,23 @@
 
 namespace Endeavors\Fhir\Support;
 
+use Endeavors\Fhir\Support\File;
 use Endeavors\Fhir\Support\Contracts\FilePathInterface;
+use Endeavors\Fhir\InvalidSourceFileException;
 
 /**
  * Handle file existence creation
  */
-class File implements FilePathInterface
+class ExistingFile implements FilePathInterface
 {
-    private $fileSystem;
-
-    private $path;
+    private $file;
 
     public function __construct(string $path)
     {
-        $this->path = $path;
+        $this->file = File::create($path);
 
-        $this->fileSystem = new \Illuminate\Filesystem\Filesystem;
-
-        if ($this->fileSystem->isDirectory($path)) {
-            throw new \InvalidArgumentException(sprintf("The specific file, %s, cannot be a directory.", $path));
+        if ($this->file->doesntExist()) {
+            throw new InvalidSourceFileException(sprintf("The file, %s, doesn't exist", $path));
         }
     }
 
@@ -31,22 +29,22 @@ class File implements FilePathInterface
 
     public function name()
     {
-        return $this->fileSystem->name($this->path);
+        return $this->file->name();
     }
 
     public function exactName()
     {
-        return $this->fileSystem->basename($this->path);
+        return $this->file->exactName();
     }
 
     public function extension()
     {
-        return $this->fileSystem->extension($this->path);
+        return $this->file->extension();
     }
 
     public function exists()
     {
-        return $this->fileSystem->exists($this->path);
+        return $this->file->exists();
     }
 
     public function doesntExist()
@@ -56,7 +54,7 @@ class File implements FilePathInterface
 
     public function get(): string
     {
-        return (string)$this->path;
+        return (string)$this->file->get();
     }
 
     public function __toString()

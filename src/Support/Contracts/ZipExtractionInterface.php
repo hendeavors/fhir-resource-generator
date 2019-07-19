@@ -10,9 +10,9 @@ interface ZipExtractionInterface
      * @param  array  $files [description]
      * @return [type]        [description]
      */
-    public function extract(string $location, string $zipFile, array $files): string;
+    public function extract(string $zipFile, array $files): string;
 
-    public function extractAll(string $location, string $zipFile);
+    public function extractAll(string $zipFile);
 
     // public function extractOnly(string $location, string $zipFile, array $files);
     //
