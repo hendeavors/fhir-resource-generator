@@ -25,11 +25,11 @@ class FhirClassGenerator
 
         try {
             $this->generator->generate();
-        } catch(RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $ex = new GeneratorException($e->getMessage());
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $ex = new GeneratorException($e->getMessage());
-        } catch(Throwable $e) {
+        } catch (Throwable $e) {
             $ex = new GeneratorException($e->getMessage());
         }
 

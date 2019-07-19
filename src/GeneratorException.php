@@ -4,4 +4,6 @@ namespace Endeavors\Fhir;
 
 use Exception;
 
-class GeneratorException extends Exception {}
+class GeneratorException extends Exception
+{
+}

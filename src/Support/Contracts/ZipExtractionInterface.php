@@ -14,7 +14,7 @@ interface ZipExtractionInterface
 
     public function extractAll(string $location, string $zipFile);
 
-    public function extractOnly(string $location, string $zipFile, array $files);
-
-    public function extractExcept(string $location, string $zipFile, array $files = []);
+    // public function extractOnly(string $location, string $zipFile, array $files);
+    //
+    // public function extractExcept(string $location, string $zipFile, array $files = []);
 }

@@ -16,11 +16,11 @@ class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\Zi
 
 //     require __DIR__.'/vendor/autoload.php';
 //
-// $xsdPath = 'path to wherever you un-zipped the xsd files';
+    // $xsdPath = 'path to wherever you un-zipped the xsd files';
 //
-// $generator = new \DCarbone\PHPFHIR\ClassGenerator\Generator($xsdPath);
+    // $generator = new \DCarbone\PHPFHIR\ClassGenerator\Generator($xsdPath);
 //
-// $generator->generate();
+    // $generator->generate();
 
     // const WHITELIST = 1;
     //
@@ -70,32 +70,70 @@ class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\Zi
         return new static(new Zipper());
     }
 
-    public function extract(string $location, string $zipFile, array $files = []): string
+    private $sourceDirectory;
+
+    public function sourceDirectory(string $sourceDirectory)
     {
-        if ($this->makeZip($zipFile)) {
-
-            $this->zipper->extractTo($location, $files);
-            // we'll assume all files?
-            if (count($files) === 0) {
-                $fileNames = [];
-
-                foreach($this->allFiles($zipFile) as $file) {
-                    $fileNames[] = $file->exactName();
-                }
-
-                $this->zipper->extractTo($location, $fileNames, 1);
-            }
-
-            //$this->zipper->close();
-            return $location;
+        if (!is_dir($sourceDirectory)) {
+            throw new \InvalidArgumentException(sprintf("The directory, %s, is invalid. Please ensure you have a valid directory and try again.", $sourceDirectory));
         }
 
-        return "";
+        $this->sourceDirectory = $this->cleanDirectory($sourceDirectory);
+
+        return $this;
+    }
+
+    private $destinationDirectory;
+
+    public function destinationDirectory(string $destinationDirectory)
+    {
+        if (!is_dir($destinationDirectory)) {
+            throw new \InvalidArgumentException(sprintf("The directory, %s, is invalid. Please ensure you have a valid directory and try again.", $destinationDirectory));
+        }
+
+        $this->destinationDirectory = $this->cleanDirectory($destinationDirectory);
+
+        return $this;
+    }
+
+    protected function cleanDirectory(string $directory)
+    {
+        $length = strlen($directory);
+
+        if ($directory[$length-1] !== DIRECTORY_SEPARATOR) {
+            $directory .= DIRECTORY_SEPARATOR;
+        }
+
+        return $directory;
+    }
+
+    public function extract(string $location, string $zipFile, array $files = []): string
+    {
+        $zipFile = $this->sourceDirectory . $zipFile;
+
+        $location = $this->destinationDirectory . $location;
+
+        $this->makeZip($zipFile);
+
+        $this->zipper->extractTo($location, $files);
+        // we'll assume all files?
+        if (count($files) === 0) {
+            $fileNames = [];
+
+            foreach ($this->allFiles($zipFile) as $file) {
+                $fileNames[] = $file->exactName();
+            }
+
+            $this->zipper->extractTo($location, $fileNames, 1);
+        }
+
+        //$this->zipper->close();
+        return $location;
     }
 
     public function extractAll(string $location, string $zipFile)
     {
-        $this->extract($location, $zipFile);
+        return $this->extract($location, $zipFile);
     }
 
     public function extractOnly(string $location, string $zipFile, array $files = [])
@@ -128,7 +166,7 @@ class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\Zi
             return [];
         }
 
-        $repository->each(function($file) use(&$fileNames) {
+        $repository->each(function ($file) use (&$fileNames) {
             $fileNames[] = File::create($file);
         });
 
@@ -143,9 +181,9 @@ class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\Zi
             $this->zipper->make($path);
 
             $zipped = true;
-        } catch(\Exception $ex) {
+        } catch (\Exception $ex) {
             $zipped = false;
-        } catch(\Throwable $ex) {
+        } catch (\Throwable $ex) {
             $zipped = false;
         } finally {
             return $zipped;

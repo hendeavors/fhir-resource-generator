@@ -2,3 +2,6 @@ vendor*
 composer.lock
 *.zip
 *.txt
+*.sch
+*.xsd
+.DS_Store
