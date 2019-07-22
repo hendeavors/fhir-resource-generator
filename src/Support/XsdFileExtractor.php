@@ -106,15 +106,17 @@ class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\Zi
 
         $zipFile = File::create($zipFile);
 
-        $location = $this->destinationDirectory;
-
         $this->makeZip($zipFile);
 
         if ($zipFile->doesntExist()) {
             throw InvalidSourceFileException::invalidSourceFile($zipFile);
         }
 
-        $this->zipper->extractTo($location, $files);
+        if ($this->getDestinationDirectory()->doesntExist()) {
+            throw InvalidDestinationDirectoryException::invalidDestinationDirectory($this->getDestinationDirectory());
+        }
+
+        $this->zipper->extractTo($this->getDestinationDirectory(), $files);
         // we'll assume all files?
         if (count($files) === 0) {
             $fileNames = [];
@@ -123,10 +125,10 @@ class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\Zi
                 $fileNames[] = $file->exactName();
             }
 
-            $this->zipper->extractTo($location, $fileNames, 1);
+            $this->zipper->extractTo($this->getDestinationDirectory(), $fileNames, 1);
         }
 
-        return $location;
+        return $this->getDestinationDirectory()->get();
     }
 
     public function extractAll(string $zipFile)

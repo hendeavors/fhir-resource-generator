@@ -20,7 +20,7 @@ class File implements FilePathInterface
         $this->fileSystem = new \Illuminate\Filesystem\Filesystem;
 
         if ($this->fileSystem->isDirectory($path)) {
-            throw new \InvalidArgumentException(sprintf("The specific file, %s, cannot be a directory.", $path));
+            throw new \InvalidArgumentException(sprintf("The specified file, %s, cannot be a directory.", $path));
         }
     }
 

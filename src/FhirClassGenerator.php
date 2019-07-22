@@ -11,6 +11,7 @@ use Endeavors\Fhir\GeneratorException;
 use Endeavors\Fhir\GeneratorResponse;
 use Endeavors\Fhir\Support\Contracts\ZipExtractionInterface;
 use Endeavors\Fhir\Support\ExistingFile;
+use Endeavors\Fhir\Support\Directory;
 
 class FhirClassGenerator
 {
@@ -18,9 +19,14 @@ class FhirClassGenerator
 
     public function __construct(string $xsdPath)
     {
-        $existingFile = ExistingFile::create($xsdPath);
+        // the path where the files were unzipped
+        $directory = Directory::create($xsdPath);
 
-        $this->generator = new Generator($existingFile->get());
+        if ($directory->doesntExist()) {
+            throw InvalidDestinationDirectoryException::invalidDestinationDirectoryPath($xsdPath);
+        }
+
+        $this->generator = new Generator($directory->get());
     }
 
     public static function create(string $xsdPath)

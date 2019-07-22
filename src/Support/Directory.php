@@ -34,6 +34,11 @@ class Directory
         return $this->fileSystem->exists($this->path);
     }
 
+    public function isEmpty()
+    {
+        return "" === $this->get();
+    }
+
     public function doesntExist()
     {
         return !$this->exists();
@@ -52,5 +57,15 @@ class Directory
     public function remove()
     {
         return $this->fileSystem->deleteDirectory($this->path);
+    }
+
+    public function get(): string
+    {
+        return (string)$this->path;
+    }
+
+    public function __toString()
+    {
+        return $this->get();
     }
 }
