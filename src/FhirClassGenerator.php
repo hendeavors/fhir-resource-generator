@@ -12,6 +12,7 @@ use Endeavors\Fhir\GeneratorResponse;
 use Endeavors\Fhir\Support\Contracts\ZipExtractionInterface;
 use Endeavors\Fhir\Support\ExistingFile;
 use Endeavors\Fhir\Support\Directory;
+use Endeavors\Fhir\Server;
 
 class FhirClassGenerator
 {
@@ -26,7 +27,7 @@ class FhirClassGenerator
             throw InvalidDestinationDirectoryException::invalidDestinationDirectoryPath($xsdPath);
         }
 
-        $this->generator = new Generator($directory->get());
+        $this->generator = new Generator($directory->get(), __DIR__ . DIRECTORY_SEPARATOR . 'output', 'Endeavors\Fhir');
     }
 
     public static function create(string $xsdPath)
@@ -41,17 +42,19 @@ class FhirClassGenerator
 
     public function generate()
     {
+
         // try extracting, if fails download from url?
         $ex = null;
-
-        try {
-            $this->generator->generate();
-        } catch (RuntimeException $e) {
-            $ex = new GeneratorException($e->getMessage());
-        } catch (Exception $e) {
-            $ex = new GeneratorException($e->getMessage());
-        } catch (Throwable $e) {
-            $ex = new GeneratorException($e->getMessage());
+        if (false) {
+            try {
+                $this->generator->generate();
+            } catch (RuntimeException $e) {
+                $ex = new GeneratorException($e->getMessage());
+            } catch (Exception $e) {
+                $ex = new GeneratorException($e->getMessage());
+            } catch (Throwable $e) {
+                $ex = new GeneratorException($e->getMessage());
+            }
         }
 
         return new GeneratorResponse($ex);

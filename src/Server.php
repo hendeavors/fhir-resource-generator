@@ -10,6 +10,6 @@ class Server
      */
     public static function needsConfiguration(): bool
     {
-        return class_exists('PHPFHIRGenerated\FHIRElement');
+        return class_exists('Endeavors\Fhir\PHPFHIRResponseParser');
     }
 }

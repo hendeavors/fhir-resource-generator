@@ -49,6 +49,11 @@ class File implements FilePathInterface
         return $this->fileSystem->exists($this->path);
     }
 
+    public function read()
+    {
+        return $this->fileSystem->get($this->path);
+    }
+
     public function doesntExist()
     {
         return !$this->exists();

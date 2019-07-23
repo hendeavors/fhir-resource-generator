@@ -11,6 +11,9 @@
     "autoload": {
         "psr-4": {
             "Endeavors\\Fhir\\": "src/"
+        },
+        "psr-0": {
+            "Endeavors\\Fhir\\": "src/output/"
         }
     },
     "autoload-dev": {
