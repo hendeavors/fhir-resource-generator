@@ -2,7 +2,8 @@
     "require": {
         "illuminate/console": "5.5.*",
         "illuminate/support": "5.5.*",
-        "dcarbone/php-fhir": "^0.5.1",
+        "dcarbone/php-fhir": "dev-master",
+        "league/oauth2-client": "^2.4",
         "chumper/zipper": "1.0.x"
     },
     "require-dev": {

@@ -27,6 +27,10 @@ class FhirClassGenerator
             throw InvalidDestinationDirectoryException::invalidDestinationDirectoryPath($xsdPath);
         }
 
+        // echo 'Downloading ' . $version . ' from ' . $url . PHP_EOL;
+        // Download/extract ZIP file
+    //    copy($url, $zipFileName);
+
         $this->generator = new Generator($directory->get(), __DIR__ . DIRECTORY_SEPARATOR . 'output', 'Endeavors\Fhir');
     }
 
