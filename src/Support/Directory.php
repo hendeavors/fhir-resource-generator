@@ -36,6 +36,8 @@ class Directory
 
     public function isEmpty()
     {
+        // its obvious that an empty directory
+        // string will not have any files in it
         return "" === $this->get();
     }
 

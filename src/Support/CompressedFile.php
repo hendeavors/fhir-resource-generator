@@ -15,30 +15,6 @@ class CompressedFile implements Contracts\ZipExtractionInterface, Contracts\ZipA
 {
     private $zipper;
 
-    private $isZipped = false;
-
-//     require __DIR__.'/vendor/autoload.php';
-//
-    // $xsdPath = 'path to wherever you un-zipped the xsd files';
-//
-    // $generator = new \DCarbone\PHPFHIR\ClassGenerator\Generator($xsdPath);
-//
-    // $generator->generate();
-
-    // const WHITELIST = 1;
-    //
-    // /**
-    //  * Constant for extracting
-    //  */
-    // const BLACKLIST = 2;
-    //
-    // /**
-    //  * Constant for matching only strictly equal file names
-    //  */
-    // const EXACT_MATCH = 4;
-    //
-
-
     public function __construct(Zipper $zipper)
     {
         $this->zipper = $zipper;
@@ -59,14 +35,14 @@ class CompressedFile implements Contracts\ZipExtractionInterface, Contracts\ZipA
             throw new InvalidSourceFileException(sprintf("The source directory, %s, is invalid. Please ensure you have a valid directory and try again.", $sourceDirectory));
         }
 
-        $this->sourceDirectory = $this->cleanDirectory($sourceDirectory);
+        $this->sourceDirectory = Directory::create($this->cleanDirectory($sourceDirectory) ?? "");
 
         return $this;
     }
 
     public function getSourceDirectory()
     {
-        return Directory::create($this->sourceDirectory ?? "");
+        return $this->sourceDirectory ?? Directory::create("");
     }
 
     private $destinationDirectory;
@@ -84,7 +60,7 @@ class CompressedFile implements Contracts\ZipExtractionInterface, Contracts\ZipA
         return $this;
     }
 
-    public function getDestinationDirectory()
+    public function getDestinationDirectory(): Directory
     {
         return $this->destinationDirectory ?? Directory::create("");
     }
@@ -100,7 +76,7 @@ class CompressedFile implements Contracts\ZipExtractionInterface, Contracts\ZipA
         return $directory;
     }
 
-    public function extract(string $zipFile, array $files = []): string
+    public function extract(string $zipFile, array $files = []): Directory
     {
         $zipFile = $this->sourceDirectory . $zipFile;
 
@@ -133,10 +109,10 @@ class CompressedFile implements Contracts\ZipExtractionInterface, Contracts\ZipA
             $this->zipper->extractTo($this->getDestinationDirectory(), $fileNames, 1);
         }
 
-        return $this->getDestinationDirectory()->get();
+        return $this->getDestinationDirectory();
     }
 
-    public function extractAll(string $zipFile)
+    public function extractAll(string $zipFile): Directory
     {
         return $this->extract($zipFile);
     }

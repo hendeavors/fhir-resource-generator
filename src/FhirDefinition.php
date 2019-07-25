@@ -7,44 +7,75 @@ use Endeavors\Fhir\Support\RemoteFile;
 use Endeavors\Fhir\Support\CompressedFile;
 use Endeavors\Fhir\Support\File;
 use Endeavors\Fhir\FhirClassGenerator;
+use Endeavors\Fhir\Contracts\FhirDefinitionVersionInterface;
+use Endeavors\Fhir\Contracts\FhirDefinitionVersionLocationInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Endeavors\Fhir\ConsoleGeneratorResponse;
 
-class FhirDefinition
+class FhirDefinition implements FhirDefinitionVersionInterface
 {
     private static $definitions = [
         'schemaPath'  => __DIR__ . '/../input',
         'classesPath' => __DIR__ . '/../output',
         'versions' => [
-            'DSTU1'  => ['url' => 'http://hl7.org/fhir/DSTU1/fhir-all-xsd.zip'],
-            'DSTU2'  => ['url' => 'http://hl7.org/fhir/DSTU2/fhir-all-xsd.zip'],
-            'STU3'   => ['url' => 'http://hl7.org/fhir/STU3/fhir-all-xsd.zip'],
-            'R4'     => ['url' => 'http://hl7.org/fhir/R4/fhir-all-xsd.zip'],
-            'Build'  => ['url' => 'http://build.fhir.org/fhir-all-xsd.zip']
+            self::VERSION_10  => ['url' => FhirDefinitionVersionLocationInterface::VERSION_10],
+            self::VERSION_20  => ['url' => FhirDefinitionVersionLocationInterface::VERSION_20],
+            self::VERSION_30   => ['url' => FhirDefinitionVersionLocationInterface::VERSION_30],
+            self::VERSION_40     => ['url' => FhirDefinitionVersionLocationInterface::VERSION_40],
+            self::VERSION_BUILD  => ['url' => FhirDefinitionVersionLocationInterface::VERSION_BUILD]
         ]
     ];
 
-    public static function download(string $downloadVersion = null)
+    public static function download(string $downloadVersion = null, OutputInterface $output = null)
     {
         $versions = static::$definitions['versions'] ?? [];
 
         if (null !== $downloadVersion) {
-            $versions = [$downloadVersion => static::$definitions['versions'][$downloadVersion] ?? static::$definitions['versions']['DSTU2']];
+            $versions = [$downloadVersion => static::$definitions['versions'][$downloadVersion] ?? []];
         }
 
         foreach($versions as $version => $path) {
             $remoteFile = RemoteFile::create($path['url']);
             $zipFileName = static::$definitions['schemaPath'] . DIRECTORY_SEPARATOR . $version . '.zip';
-            echo 'Downloading ' . $version . ' from ' . ($path['url'] ?? "") . PHP_EOL;
-            // Download/Extract zip file
-            //CompressedFile::create()->extract($remoteFile->download(File::create($zipFileName)));
+            $response = FhirClassGenerator::fromZip(CompressedFile::create(), $remoteFile->download(File::create($zipFileName)))
+            ->generate();
 
-            $response = FhirClassGenerator::fromZip($remoteFile->download(File::create($zipFileName)))->generate();
+            if (null !== $output) {
+                $response = new ConsoleGeneratorResponse($output, $response);
+            }
 
-            var_dump($response->get());
+            $response->print();
         }
     }
 
-    public static function downloadSTU1()
+    public static function downloadFromConsole(string $downloadVersion = null)
     {
-        static::download('DSTU1');
+        return static::download($downloadVersion, new ConsoleOutput);
+    }
+
+    public static function downloadDSTU1(OutputInterface $output = null)
+    {
+        static::download(self::VERSION_10, $output);
+    }
+
+    public static function downloadDSTU2(OutputInterface $output = null)
+    {
+        static::download(self::VERSION_20, $output);
+    }
+
+    public static function downloadSTU3(OutputInterface $output = null)
+    {
+        static::download(self::VERSION_30, $output);
+    }
+
+    public static function downloadR4(OutputInterface $output = null)
+    {
+        static::download(self::VERSION_40, $output);
+    }
+
+    public static function downloadBuild(OutputInterface $output = null)
+    {
+        static::download(self::VERSION_BUILD, $output);
     }
 }

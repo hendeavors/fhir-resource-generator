@@ -9,12 +9,6 @@ use Endeavors\Fhir\Support\Directory;
 
 class ZipExtractionSourceFileTest extends TestCase
 {
-    private $sourceFileToRead;
-
-    protected function setUp()
-    {
-    }
-
     /**
      * @test
      * @expectedException \Endeavors\Fhir\InvalidSourceFileException
@@ -25,9 +19,5 @@ class ZipExtractionSourceFileTest extends TestCase
         // assumes foobarbaz doesn't exist
         $path = $extractor
         ->extract('foobarbaz');
-    }
-
-    protected function tearDown()
-    {
     }
 }

@@ -19,23 +19,27 @@ class FhirClassGenerator
 {
     private $generator;
 
+    private $destinationDirectory;
+
+    private $directory;
+
     public function __construct(string $directory)
     {
         // the path where the files were unzipped
-        $directory = Directory::create($directory);
+        $this->directory = Directory::create($directory);
 
-        if ($directory->doesntExist()) {
-            throw InvalidDestinationDirectoryException::invalidDestinationDirectoryPath($directory);
+        if ($this->directory->doesntExist()) {
+            throw InvalidDestinationDirectoryException::invalidDestinationDirectoryPath($this->directory);
         }
 
-        $destination = Directory::create(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'output');
+        $this->destinationDirectory = Directory::create(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'output');
 
-        $destination->make();
+        $this->destinationDirectory->make();
 
         $config = new \DCarbone\PHPFHIR\ClassGenerator\Config([
-            'xsdPath' => $directory,
-            'outputPath' => $destination,
-            'outputNamespace' => 'Endeavors\HL7\Fhir\\' . $directory->name()
+            'xsdPath' => $this->directory,
+            'outputPath' => $this->destinationDirectory,
+            'outputNamespace' => 'Endeavors\HL7\Fhir\\' . $this->directory->name()
         ]);
 
         $this->generator = new Generator($config);
@@ -46,20 +50,31 @@ class FhirClassGenerator
         return new static($directory);
     }
 
-    public static function fromZip(string $zipFileName)
+    public static function fromZip(CompressedFile $file, string $zipFileName)
     {
-        $directory = CompressedFile::create()->extractAll($zipFileName);
-
-        return static::create($directory);
+        return static::fromArchive($file, $zipFileName);
     }
 
+    public static function fromArchive(CompressedFile $file, string $zipFileName)
+    {
+        return static::create($file->extractAll($zipFileName));
+    }
+
+    /**
+     * @todo throw exception if already generated
+     * @return GeneratorResponse
+     */
     public function generate()
     {
         $ex = null;
 
-        if (true) {
+        $message = 'Generator task has been run for ' . $this->directory->name() . '.';
+
+        if ($this->generatedDirectoryDoesntExist()) {
+
             try {
                 $this->generator->generate();
+                $message = 'Generator task completed successfully for ' . $this->directory->name() . '.';
             } catch (RuntimeException $e) {
                 $ex = new GeneratorException($e->getMessage());
             } catch (Exception $e) {
@@ -69,6 +84,21 @@ class FhirClassGenerator
             }
         }
 
-        return new GeneratorResponse($ex);
+        return new GeneratorResponse($ex, $message);
+    }
+
+    private function generatedDirectoryDoesntExist(): bool
+    {
+        $directory = $this->destinationDirectory->get()
+        . DIRECTORY_SEPARATOR
+        . 'Endeavors'
+        . DIRECTORY_SEPARATOR
+        . 'HL7'
+        . DIRECTORY_SEPARATOR
+        . 'Fhir'
+        . DIRECTORY_SEPARATOR
+        . $this->directory->name();
+
+        return Directory::create($directory)->doesntExist();
     }
 }

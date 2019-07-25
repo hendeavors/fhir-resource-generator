@@ -8,10 +8,6 @@ use Endeavors\Fhir\Support\CompressedFile;
 
 class FhirClassCreationFailureTest extends TestCase
 {
-    protected function setUp()
-    {
-    }
-
     /**
      * @test
      * @expectedException \Endeavors\Fhir\InvalidSourceFileException
@@ -20,21 +16,7 @@ class FhirClassCreationFailureTest extends TestCase
     {
         $extractor = CompressedFile::create();
 
-        FhirClassGenerator::fromZip($extractor, 'sourcefile.zip');
-    }
-
-    /**
-     * @test
-     * @expectedException \Endeavors\Fhir\InvalidDestinationDirectoryException
-     */
-    public function createFromRealZip()
-    {
-        // not setting a directory will produce empty destination directory exception
-        $extractor = CompressedFile::create();
-        $extractor
-        ->sourceDirectory(__DIR__ . DIRECTORY_SEPARATOR . 'bin/testfiles');
-
-        FhirClassGenerator::fromZip($extractor, 'fhir-all-xsd.zip');
+        FhirClassGenerator::fromZip($extractor, 'somebogussourcefile');
     }
 
     /**
@@ -44,9 +26,5 @@ class FhirClassCreationFailureTest extends TestCase
     public function createFromPath()
     {
         FhirClassGenerator::create('somebogusdestinationdirectory');
-    }
-
-    protected function tearDown()
-    {
     }
 }

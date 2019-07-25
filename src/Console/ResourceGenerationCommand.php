@@ -8,21 +8,18 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\ArrayInput;
-use Illuminate\Support\Str;
+use Endeavors\Fhir\UnsupportedEnvironmentException;
+use Endeavors\Fhir\FhirDefinition;
 
 /**
  * This command will serve to generate the fhir resources
  * As objects using the underlying library dcarbone/php-fhir
- * This command will required a path to the uncompressed files
+ * This will download the file definitions, respectively,
+ * Unzip them to a specified directory corresponding to
+ * The fhir verions, and proceed to generate the fhir
+ * Definitions as PHP classes for reusability
  */
- // require __DIR__.'/vendor/autoload.php';
- //
- // $xsdPath = 'path to wherever you un-zipped the xsd files';
- //
- // $generator = new \DCarbone\PHPFHIR\ClassGenerator\Generator($xsdPath);
- //
- // $generator->generate();
- //
+
 class ResourceGenerationCommand extends Command
 {
     public function __construct()
@@ -56,26 +53,31 @@ class ResourceGenerationCommand extends Command
     public function handle()
     {
         if (null === $this->input) {
-            // unsupported
-            throw new \Exception("Environment not configured to support console input");
+            $this->createOptionalInputFromSource([]);
         }
-        // Will work from within Laravel context
-        // Otherwise invoke createOptionalInputFromSource
-        // Prior to invoking handle
+
+        if (null === $this->input) {
+            // unsupported
+            throw new UnsupportedEnvironmentException("Environment not configured to support console input.");
+        }
+
         $version = $this->option('version');
 
-        if ($version === "DSTU1") {
-            \Endeavors\Fhir\FhirDefinition::downloadSTU1();
+        if ($version === FhirDefinition::VERSION_10) {
+            FhirDefinition::downloadDSTU1($this->output);
+        } elseif ($version === FhirDefinition::VERSION_20) {
+            FhirDefinition::downloadDSTU2($this->output);
+        } elseif ($version === FhirDefinition::VERSION_30) {
+            FhirDefinition::downloadSTU3($this->output);
+        } elseif ($version === FhirDefinition::VERSION_40) {
+            FhirDefinition::downloadR4($this->output);
+        } elseif ($version === FhirDefinition::VERSION_BUILD) {
+            FhirDefinition::downloadBuild($this->output);
+        } elseif (null === $version) {
+            FhirDefinition::downloadFromConsole();
         } else {
-            \Endeavors\Fhir\FhirDefinition::download();
+            $this->error("Invalid fhir version specified");
         }
-    }
-
-    public function useConsole()
-    {
-        $this->output = $this->output ?? new ConsoleOutput;
-
-        return $this;
     }
 
     /**
@@ -89,6 +91,12 @@ class ResourceGenerationCommand extends Command
         $definition = new InputDefinition([
             new InputOption('version', 'v', InputOption::VALUE_OPTIONAL),
         ]);
+
+        if (count($arguments) === 0) {
+            $this->input = $input = new ArrayInput([], $definition);
+
+            return $this->input;
+        }
 
         $this->input = $input = new ArrayInput($arguments, $definition);
 

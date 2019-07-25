@@ -8,9 +8,13 @@ class GeneratorResponse
 {
     private $exception;
 
-    public function __construct(GeneratorException $exception = null)
+    private $message;
+
+    public function __construct(GeneratorException $exception = null, string $message)
     {
         $this->exception = $exception;
+
+        $this->message = $message;
     }
 
     public function succeeds()
@@ -29,7 +33,17 @@ class GeneratorResponse
             return $this->exception->getMessage();
         }
 
-        return "Generator task completed without error.";
+        return $this->message;
+    }
+
+    public function print()
+    {
+        echo $this->get();
+    }
+
+    public function printOutput()
+    {
+        $this->print();
     }
 
     public function __toString()

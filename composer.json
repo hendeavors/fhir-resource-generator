@@ -2,9 +2,11 @@
     "name": "endeavors/fhir-resource-generator",
     "type": "library",
     "description": "Generate fhir resources into php classes",
+    "license": "MIT",
     "require": {
         "illuminate/console": "5.5.*",
         "illuminate/support": "5.5.*",
+        "illuminate/filesystem": "5.5.*",
         "dcarbone/php-fhir": "dev-master",
         "league/oauth2-client": "^2.4",
         "chumper/zipper": "1.0.x"
