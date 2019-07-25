@@ -4,6 +4,10 @@ namespace Endeavors\Fhir\Console;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\ArrayInput;
 use Illuminate\Support\Str;
 
 /**
@@ -27,12 +31,13 @@ class ResourceGenerationCommand extends Command
 
         $this->output = $this->output ?? new ConsoleOutput;
     }
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'fhir:resources.generate';
+    protected $signature = 'fhir:resources.generate {--version=}';
 
     /**
      * The console command description.
@@ -48,30 +53,45 @@ class ResourceGenerationCommand extends Command
      * @param  array   $arguments
      * @return int
      */
-    public function call($command, array $arguments = [])
+    public function handle()
     {
-        $this->info('Display this on the screen');
-
-        $output = '';
-
-        foreach($this->commandStrings() as $commandString) {
-            $executionString = 'php ' . $commandString;
-            $output = shell_exec($executionString);
-
-            if (Str::contains($output, 'Could not open input file')) {
-                $this->error('Could not open input file' . $commandString);
-            }
+        if (null === $this->input) {
+            // unsupported
+            throw new \Exception("Environment not configured to support console input");
         }
+        // Will work from within Laravel context
+        // Otherwise invoke createOptionalInputFromSource
+        // Prior to invoking handle
+        $version = $this->option('version');
 
-
-
-        dd($output);
-
-        parent::call($command, $arguments);
+        if ($version === "DSTU1") {
+            \Endeavors\Fhir\FhirDefinition::downloadSTU1();
+        } else {
+            \Endeavors\Fhir\FhirDefinition::download();
+        }
     }
 
-    protected function commandStrings()
+    public function useConsole()
     {
-        return ['../../../../vendor/dcarbone/php-fhir/bin/generate.php', '../../../vendor/dcarbone/php-fhir/bin/generate.php', __DIR__ . '/../../vendor/dcarbone/php-fhir/bin/generate.php'];
+        $this->output = $this->output ?? new ConsoleOutput;
+
+        return $this;
+    }
+
+    /**
+     * Create an input instance from the given arguments.
+     *
+     * @param  array  $arguments
+     * @return \Symfony\Component\Console\Input\ArrayInput
+     */
+    public function createOptionalInputFromSource(array $arguments)
+    {
+        $definition = new InputDefinition([
+            new InputOption('version', 'v', InputOption::VALUE_OPTIONAL),
+        ]);
+
+        $this->input = $input = new ArrayInput($arguments, $definition);
+
+        return $this->input;
     }
 }

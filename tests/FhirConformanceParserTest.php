@@ -20,7 +20,7 @@ class FhirConformanceParserTest extends TestCase
 
         $conformance = new Conformance($json);
 
-        dd($conformance->rest, $conformance->acceptUnknown, $conformance->fhirVersion, $conformance->url, $conformance->version, $conformance->status, $conformance->name, $conformance->experimental, $conformance->publisher, $conformance->software);
+        //dd($conformance->rest, $conformance->acceptUnknown, $conformance->fhirVersion, $conformance->url, $conformance->version, $conformance->status, $conformance->name, $conformance->experimental, $conformance->publisher, $conformance->software);
     }
 
     protected function tearDown()

@@ -11,6 +11,7 @@ use Endeavors\Fhir\GeneratorException;
 use Endeavors\Fhir\GeneratorResponse;
 use Endeavors\Fhir\Support\Contracts\ZipExtractionInterface;
 use Endeavors\Fhir\Support\ExistingFile;
+use Endeavors\Fhir\Support\CompressedFile;
 use Endeavors\Fhir\Support\Directory;
 use Endeavors\Fhir\Server;
 
@@ -18,38 +19,45 @@ class FhirClassGenerator
 {
     private $generator;
 
-    public function __construct(string $xsdPath)
+    public function __construct(string $directory)
     {
         // the path where the files were unzipped
-        $directory = Directory::create($xsdPath);
+        $directory = Directory::create($directory);
 
         if ($directory->doesntExist()) {
-            throw InvalidDestinationDirectoryException::invalidDestinationDirectoryPath($xsdPath);
+            throw InvalidDestinationDirectoryException::invalidDestinationDirectoryPath($directory);
         }
 
-        // echo 'Downloading ' . $version . ' from ' . $url . PHP_EOL;
-        // Download/extract ZIP file
-    //    copy($url, $zipFileName);
+        $destination = Directory::create(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'output');
 
-        $this->generator = new Generator($directory->get(), __DIR__ . DIRECTORY_SEPARATOR . 'output', 'Endeavors\Fhir');
+        $destination->make();
+
+        $config = new \DCarbone\PHPFHIR\ClassGenerator\Config([
+            'xsdPath' => $directory,
+            'outputPath' => $destination,
+            'outputNamespace' => 'Endeavors\HL7\Fhir\\' . $directory->name()
+        ]);
+
+        $this->generator = new Generator($config);
     }
 
-    public static function create(string $xsdPath)
+    public static function create(string $directory)
     {
-        return new static($xsdPath);
+        return new static($directory);
     }
 
-    public static function fromZip(ZipExtractionInterface $extractor, string $sourceFile)
+    public static function fromZip(string $zipFileName)
     {
-        return static::create($extractor->extractAll($sourceFile));
+        $directory = CompressedFile::create()->extractAll($zipFileName);
+
+        return static::create($directory);
     }
 
     public function generate()
     {
-
-        // try extracting, if fails download from url?
         $ex = null;
-        if (false) {
+
+        if (true) {
             try {
                 $this->generator->generate();
             } catch (RuntimeException $e) {

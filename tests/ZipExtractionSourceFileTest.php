@@ -3,7 +3,7 @@
 namespace Endeavors\Fhir\Test;
 
 use PHPUnit\Framework\TestCase;
-use Endeavors\Fhir\Support\XsdFileExtractor;
+use Endeavors\Fhir\Support\CompressedFile;
 use Endeavors\Fhir\FhirClassGenerator;
 use Endeavors\Fhir\Support\Directory;
 
@@ -21,7 +21,7 @@ class ZipExtractionSourceFileTest extends TestCase
      */
     public function sourceFileCannotBeExtractedFrom()
     {
-        $extractor = XsdFileExtractor::create();
+        $extractor = CompressedFile::create();
         // assumes foobarbaz doesn't exist
         $path = $extractor
         ->extract('foobarbaz');

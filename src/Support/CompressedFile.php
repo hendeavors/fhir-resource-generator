@@ -11,7 +11,7 @@ use Endeavors\Fhir\Support\Zipper;
 use Endeavors\Fhir\InvalidSourceFileException;
 use Endeavors\Fhir\InvalidDestinationDirectoryException;
 
-class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\ZipArchiveInterface
+class CompressedFile implements Contracts\ZipExtractionInterface, Contracts\ZipArchiveInterface
 {
     private $zipper;
 
@@ -79,14 +79,14 @@ class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\Zi
             throw new InvalidDestinationDirectoryException(sprintf("The destination directory, %s, is invalid. Please ensure you have a valid directory and try again.", $destinationDirectory));
         }
 
-        $this->destinationDirectory = $this->cleanDirectory($destinationDirectory);
+        $this->destinationDirectory = Directory::create($this->cleanDirectory($destinationDirectory) ?? "");
 
         return $this;
     }
 
     public function getDestinationDirectory()
     {
-        return Directory::create($this->destinationDirectory ?? "");
+        return $this->destinationDirectory ?? Directory::create("");
     }
 
     protected function cleanDirectory(string $directory)
@@ -110,6 +110,11 @@ class XsdFileExtractor implements Contracts\ZipExtractionInterface, Contracts\Zi
 
         if ($zipFile->doesntExist()) {
             throw InvalidSourceFileException::invalidSourceFile($zipFile);
+        }
+
+        if ($this->getDestinationDirectory()->doesntExist()) {
+            // default to the files directory using the file name
+            $this->destinationDirectory = $zipFile->directory($zipFile->name());
         }
 
         if ($this->getDestinationDirectory()->doesntExist()) {

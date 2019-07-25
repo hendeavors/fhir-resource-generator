@@ -4,7 +4,7 @@ namespace Endeavors\Fhir\Test;
 
 use PHPUnit\Framework\TestCase;
 use Endeavors\Fhir\FhirClassGenerator;
-use Endeavors\Fhir\Support\XsdFileExtractor;
+use Endeavors\Fhir\Support\CompressedFile;
 
 class FhirClassCreationFailureTest extends TestCase
 {
@@ -18,7 +18,7 @@ class FhirClassCreationFailureTest extends TestCase
      */
     public function createFromZip()
     {
-        $extractor = XsdFileExtractor::create();
+        $extractor = CompressedFile::create();
 
         FhirClassGenerator::fromZip($extractor, 'sourcefile.zip');
     }
@@ -30,7 +30,7 @@ class FhirClassCreationFailureTest extends TestCase
     public function createFromRealZip()
     {
         // not setting a directory will produce empty destination directory exception
-        $extractor = XsdFileExtractor::create();
+        $extractor = CompressedFile::create();
         $extractor
         ->sourceDirectory(__DIR__ . DIRECTORY_SEPARATOR . 'bin/testfiles');
 

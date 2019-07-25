@@ -18,30 +18,21 @@ class ResourceGenerationCommandTest extends TestCase
     {
     }
 
+    public function downloadAll()
+    {
+        $cmd = new ResourceGenerationCommand();
+        $cmd->createOptionalInputFromSource(['--version' => 'foo']);
+        $cmd->handle();
+    }
+
     /**
      * @test
      */
-    public function parseFromJsonFile()
+    public function downloadSTU1()
     {
-        $laravel = new LaravelTestContainer();
-        $dispatcher = new LaravelTestDispatcher();
         $cmd = new ResourceGenerationCommand();
-        //$cmd->setLaravel($laravel);
-        $consoleApplication = new ConsoleApplication($laravel, $dispatcher, 'TEST');
-        $consoleApplication->add($cmd);
-        //$cmd->setApplication($consoleApplication);
-        $cmd->call('fhir:resources.generate');
-        //dd($cmd->getOutput());
-    }
-
-    protected function runCommand($command, $input = [])
-    {
-        return $command->run(new ArrayInput($input), new ConsoleOutput);
-    }
-
-    protected function runSilentCommand($command, $input = [])
-    {
-        return $command->run(new ArrayInput($input), new ConsoleOutput);
+        $cmd->createOptionalInputFromSource(['--version' => 'DSTU1']);
+        $cmd->handle();
     }
 
     protected function tearDown()

@@ -3,6 +3,10 @@
 namespace Endeavors\Fhir;
 
 use Endeavors\Fhir\Server;
+use Endeavors\Fhir\Support\RemoteFile;
+use Endeavors\Fhir\Support\CompressedFile;
+use Endeavors\Fhir\Support\File;
+use Endeavors\Fhir\FhirClassGenerator;
 
 class FhirDefinition
 {
@@ -10,39 +14,37 @@ class FhirDefinition
         'schemaPath'  => __DIR__ . '/../input',
         'classesPath' => __DIR__ . '/../output',
         'versions' => [
-            'DSTU1'  => ['url' => 'http://hl7.org/fhir/DSTU1/fhir-all-xsd.zip', 'namespace' => '\\HL7\\FHIR\\DSTU1'],
-            'DSTU2'  => ['url' => 'http://hl7.org/fhir/DSTU2/fhir-all-xsd.zip', 'namespace' => '\\HL7\\FHIR\\DSTU2'],
-            'STU3'   => ['url' => 'http://hl7.org/fhir/STU3/fhir-all-xsd.zip', 'namespace' => '\\HL7\\FHIR\\STU3'],
-            'Build'  => ['url' => 'http://build.fhir.org/fhir-all-xsd.zip', 'namespace' => '\\HL7\\FHIR\\Build']
+            'DSTU1'  => ['url' => 'http://hl7.org/fhir/DSTU1/fhir-all-xsd.zip'],
+            'DSTU2'  => ['url' => 'http://hl7.org/fhir/DSTU2/fhir-all-xsd.zip'],
+            'STU3'   => ['url' => 'http://hl7.org/fhir/STU3/fhir-all-xsd.zip'],
+            'R4'     => ['url' => 'http://hl7.org/fhir/R4/fhir-all-xsd.zip'],
+            'Build'  => ['url' => 'http://build.fhir.org/fhir-all-xsd.zip']
         ]
     ];
-    //     Downloading DSTU1 from http://hl7.org/fhir/DSTU1/fhir-all-xsd.zip
-    // Generating DSTU1
-    // Downloading DSTU2 from http://hl7.org/fhir/DSTU2/fhir-all-xsd.zip
-    // Generating DSTU2
-    // Downloading STU3 from http://hl7.org/fhir/STU3/fhir-all-xsd.zip
-    // Generating STU3
-    // Downloading Build from http://build.fhir.org/fhir-all-xsd.zip
-    // Generating Build
-    // Done
-    public static function download()
+
+    public static function download(string $downloadVersion = null)
     {
         $versions = static::$definitions['versions'] ?? [];
 
-        foreach(array_keys($versions) as $version) {
-            echo 'Downloading ' . $version . ' from ' . $url . PHP_EOL;
-            // Download/extract ZIP file
-        //    copy($url, $zipFileName);
+        if (null !== $downloadVersion) {
+            $versions = [$downloadVersion => static::$definitions['versions'][$downloadVersion] ?? static::$definitions['versions']['DSTU2']];
+        }
+
+        foreach($versions as $version => $path) {
+            $remoteFile = RemoteFile::create($path['url']);
+            $zipFileName = static::$definitions['schemaPath'] . DIRECTORY_SEPARATOR . $version . '.zip';
+            echo 'Downloading ' . $version . ' from ' . ($path['url'] ?? "") . PHP_EOL;
+            // Download/Extract zip file
+            //CompressedFile::create()->extract($remoteFile->download(File::create($zipFileName)));
+
+            $response = FhirClassGenerator::fromZip($remoteFile->download(File::create($zipFileName)))->generate();
+
+            var_dump($response->get());
         }
     }
 
-    public static function downloadDSTU1()
+    public static function downloadSTU1()
     {
-        return static::download('http://hl7.org/fhir/DSTU1/fhir-all-xsd.zip');
-    }
-
-    public static function downloadDSTU2()
-    {
-        return static::download('http://hl7.org/fhir/DSTU2/fhir-all-xsd.zip');
+        static::download('DSTU1');
     }
 }

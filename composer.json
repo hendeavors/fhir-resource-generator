@@ -1,4 +1,7 @@
 {
+    "name": "endeavors/fhir-resource-generator",
+    "type": "library",
+    "description": "Generate fhir resources into php classes",
     "require": {
         "illuminate/console": "5.5.*",
         "illuminate/support": "5.5.*",
@@ -11,10 +14,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Endeavors\\Fhir\\": "src/"
-        },
-        "psr-0": {
-            "Endeavors\\Fhir\\": "src/output/"
+            "Endeavors\\Fhir\\": "src/",
+            "Endeavors\\HL7\\Fhir\\": "output/Endeavors/HL7/Fhir"
         }
     },
     "autoload-dev": {

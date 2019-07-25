@@ -3,7 +3,7 @@
 namespace Endeavors\Fhir\Test;
 
 use PHPUnit\Framework\TestCase;
-use Endeavors\Fhir\Support\XsdFileExtractor;
+use Endeavors\Fhir\Support\CompressedFile;
 use Endeavors\Fhir\FhirClassGenerator;
 use Endeavors\Fhir\Support\Directory;
 
@@ -22,7 +22,7 @@ class ZipExtractionSourceDirectoryTest extends TestCase
     /** @test **/
     public function sourceCannotBeCreated()
     {
-        $extractor = XsdFileExtractor::create();
+        $extractor = CompressedFile::create();
 
         $path = $extractor
         ->getSourceDirectory()
@@ -34,7 +34,7 @@ class ZipExtractionSourceDirectoryTest extends TestCase
     /** @test **/
     public function shouldCreateNewSourceDirectory()
     {
-        $extractor = XsdFileExtractor::create();
+        $extractor = CompressedFile::create();
 
         $path = $extractor
         ->sourceDirectory($this->sourceDirectoryToCreate)
@@ -46,7 +46,7 @@ class ZipExtractionSourceDirectoryTest extends TestCase
     /** @test **/
     public function shouldNotRecreateExistingSourceDirectory()
     {
-        $extractor = XsdFileExtractor::create();
+        $extractor = CompressedFile::create();
 
         $path = $extractor
         ->sourceDirectory($this->sourceDirectoryToNotRecreate)

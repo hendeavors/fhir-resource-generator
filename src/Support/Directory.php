@@ -64,6 +64,11 @@ class Directory
         return (string)$this->path;
     }
 
+    public function real()
+    {
+        return realpath($this->get());
+    }
+
     public function __toString()
     {
         return $this->get();

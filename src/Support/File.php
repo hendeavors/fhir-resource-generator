@@ -39,6 +39,19 @@ class File implements FilePathInterface
         return $this->fileSystem->basename($this->path);
     }
 
+    public function directory(string $appends = "")
+    {
+        if (strlen($appends) > 0) {
+            $first = $appends[0];
+
+            if (DIRECTORY_SEPARATOR !== $first) {
+                $appends = DIRECTORY_SEPARATOR . $appends;
+            }
+        }
+        
+        return Directory::create((string)$this->fileSystem->dirname($this->path) . $appends);
+    }
+
     public function extension()
     {
         return $this->fileSystem->extension($this->path);
@@ -59,9 +72,21 @@ class File implements FilePathInterface
         return !$this->exists();
     }
 
+    public function save()
+    {
+        if ($this->doesntExist()) {
+            return @fopen($this->path, "w");
+        }
+    }
+
     public function get(): string
     {
         return (string)$this->path;
+    }
+
+    public function real()
+    {
+        return realpath($this->get());
     }
 
     public function __toString()

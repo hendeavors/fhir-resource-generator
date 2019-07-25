@@ -5,3 +5,5 @@ composer.lock
 *.sch
 *.xsd
 .DS_Store
+input*
+output*
