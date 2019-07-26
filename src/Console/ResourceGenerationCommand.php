@@ -19,7 +19,6 @@ use Endeavors\Fhir\FhirDefinition;
  * The fhir verions, and proceed to generate the fhir
  * Definitions as PHP classes for reusability
  */
-
 class ResourceGenerationCommand extends Command
 {
     public function __construct()

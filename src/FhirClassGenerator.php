@@ -61,7 +61,6 @@ class FhirClassGenerator
     }
 
     /**
-     * @todo throw exception if already generated
      * @return GeneratorResponse
      */
     public function generate()
@@ -71,7 +70,6 @@ class FhirClassGenerator
         $message = 'Generator task has been run for ' . $this->directory->name() . '.';
 
         if ($this->generatedDirectoryDoesntExist()) {
-
             try {
                 $this->generator->generate();
                 $message = 'Generator task completed successfully for ' . $this->directory->name() . '.';
