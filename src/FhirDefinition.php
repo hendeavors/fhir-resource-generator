@@ -11,6 +11,7 @@ use Endeavors\Fhir\Contracts\FhirDefinitionVersionInterface;
 use Endeavors\Fhir\Contracts\FhirDefinitionVersionLocationInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\NullOutput;
 use Endeavors\Fhir\ConsoleGeneratorResponse;
 
 class FhirDefinition implements FhirDefinitionVersionInterface
@@ -52,6 +53,14 @@ class FhirDefinition implements FhirDefinitionVersionInterface
     public static function downloadFromConsole(string $downloadVersion = null)
     {
         return static::download($downloadVersion, new ConsoleOutput);
+    }
+
+    /**
+     * Prevent output from interfering with http responses
+     */
+    public static function silentDownload(string $downloadVersion = null)
+    {
+        return static::download($downloadVersion, new NullOutput);
     }
 
     public static function downloadDSTU1(OutputInterface $output = null)
