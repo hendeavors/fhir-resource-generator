@@ -1,6 +1,6 @@
 <?php
 
-namespace Endeavors\Fhir;
+namespace Endeavors\Fhir\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Endeavors\Fhir\Console\ResourceGenerationCommand;

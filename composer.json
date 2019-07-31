@@ -28,7 +28,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Endeavors\\Fhir\\FhirCommandServiceProvider"
+                "Endeavors\\Fhir\\Providers\\FhirCommandServiceProvider"
             ]
         }
     }
