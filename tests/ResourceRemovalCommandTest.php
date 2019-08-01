@@ -33,26 +33,6 @@ class ResourceRemovalCommandTest extends TestCase
         $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_BUILD)->doesntExist());
     }
 
-    // /**
-    //  * If no version option is supplied all versions should remove
-    //  * If not already removeed
-    //  * @test
-    //  */
-    // public function removeAllTwice()
-    // {
-    //     $directory = $this->getOutputDirectory();
-    //
-    //     $cmd = new ResourceRemovalCommand;
-    //     $cmd->handle();
-    //     $cmd->handle();
-    //
-    //     $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_10)->doesntExist());
-    //     $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_20)->doesntExist());
-    //     $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_30)->doesntExist());
-    //     $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_40)->doesntExist());
-    //     $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_BUILD)->doesntExist());
-    // }
-
     /**
      * Nothing should remove here
      * @test
