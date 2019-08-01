@@ -17,17 +17,10 @@ use Endeavors\Fhir\FhirDefinition;
  * This will download the file definitions, respectively,
  * Unzip them to a specified directory corresponding to
  * The fhir verions, and proceed to generate the fhir
- * Definitions as PHP classes for reusability
+ * Definitions as PHP classes.
  */
 class ResourceGenerationCommand extends Command
 {
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->output = $this->output ?? new ConsoleOutput;
-    }
-
     /**
      * The name and signature of the console command.
      *
@@ -44,6 +37,7 @@ class ResourceGenerationCommand extends Command
 
     /**
      * Call another console command.
+     * Executed by laravel.
      *
      * @param  string  $command
      * @param  array   $arguments
@@ -61,6 +55,8 @@ class ResourceGenerationCommand extends Command
         }
 
         $version = $this->option('fhirversion');
+
+        $this->output = new ConsoleOutput;
 
         if ($version === FhirDefinition::VERSION_10) {
             FhirDefinition::downloadDSTU1($this->output);

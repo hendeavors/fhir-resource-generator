@@ -3,17 +3,17 @@
 namespace Endeavors\Fhir;
 
 use Endeavors\Fhir\GeneratorException;
-use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class ConsoleGeneratorResponse
 {
-    private $console;
+    private $output;
 
     private $response;
 
-    public function __construct(ConsoleOutput $console, GeneratorResponse $response)
+    public function __construct(OutputInterface $output, GeneratorResponse $response)
     {
-        $this->console = $console;
+        $this->output = $output;
 
         $this->response = $response;
     }
@@ -36,9 +36,9 @@ class ConsoleGeneratorResponse
     public function print()
     {
         if ($this->fails()) {
-            $this->console->writeln(sprintf("<error>%s</error>", $this->get()));
+            $this->output->writeln(sprintf("<error>%s</error>", $this->get()));
         } else {
-            $this->console->writeln(sprintf("<info>%s</info>", $this->get()));
+            $this->output->writeln(sprintf("<info>%s</info>", $this->get()));
         }
     }
 

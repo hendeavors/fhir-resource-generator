@@ -10,13 +10,13 @@ use Throwable;
 use Endeavors\Fhir\GeneratorException;
 use Endeavors\Fhir\GeneratorResponse;
 use Endeavors\Fhir\Support\Contracts\ZipExtractionInterface;
-use Endeavors\Fhir\Support\ExistingFile;
-use Endeavors\Fhir\Support\CompressedFile;
 use Endeavors\Fhir\Support\Directory;
 use Endeavors\Fhir\Server;
 
 class FhirClassGenerator
 {
+    const GENERATOR_NAMESPACE = 'Endeavors\HL7\Fhir\\';
+
     private $generator;
 
     private $destinationDirectory;
@@ -39,7 +39,7 @@ class FhirClassGenerator
         $config = new \DCarbone\PHPFHIR\ClassGenerator\Config([
             'xsdPath' => $this->directory,
             'outputPath' => $this->destinationDirectory,
-            'outputNamespace' => 'Endeavors\HL7\Fhir\\' . $this->directory->name()
+            'outputNamespace' => self::GENERATOR_NAMESPACE . $this->directory->name()
         ]);
 
         $this->generator = new Generator($config);
@@ -50,13 +50,14 @@ class FhirClassGenerator
         return new static($directory);
     }
 
-    public static function fromZip(CompressedFile $file, string $zipFileName)
+    public static function fromZip(ZipExtractionInterface $file, string $zipFileName)
     {
         return static::fromArchive($file, $zipFileName);
     }
 
-    public static function fromArchive(CompressedFile $file, string $zipFileName)
+    public static function fromArchive(ZipExtractionInterface $file, string $zipFileName)
     {
+        // We extract all files even though it may not be necessary
         return static::create($file->extractAll($zipFileName));
     }
 

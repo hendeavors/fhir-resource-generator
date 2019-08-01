@@ -48,7 +48,7 @@ class File implements FilePathInterface
                 $appends = DIRECTORY_SEPARATOR . $appends;
             }
         }
-        
+
         return Directory::create((string)$this->fileSystem->dirname($this->path) . $appends);
     }
 
@@ -76,6 +76,13 @@ class File implements FilePathInterface
     {
         if ($this->doesntExist()) {
             return @fopen($this->path, "w");
+        }
+    }
+
+    public function remove()
+    {
+        if ($this->exists()) {
+            return $this->fileSystem->delete($this->path);
         }
     }
 
