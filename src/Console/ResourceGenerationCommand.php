@@ -33,7 +33,7 @@ class ResourceGenerationCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'fhir:resources.generate {--version=}';
+    protected $signature = 'fhir:resources.generate {--fhirversion=}';
 
     /**
      * The console command description.
@@ -60,7 +60,7 @@ class ResourceGenerationCommand extends Command
             throw new UnsupportedEnvironmentException("Environment not configured to support console input.");
         }
 
-        $version = $this->option('version');
+        $version = $this->option('fhirversion');
 
         if ($version === FhirDefinition::VERSION_10) {
             FhirDefinition::downloadDSTU1($this->output);
@@ -75,7 +75,7 @@ class ResourceGenerationCommand extends Command
         } elseif (null === $version) {
             FhirDefinition::downloadFromConsole();
         } else {
-            $this->error("Invalid fhir version specified");
+            $this->error("Invalid fhirversion specified");
         }
     }
 
@@ -88,7 +88,7 @@ class ResourceGenerationCommand extends Command
     public function createOptionalInputFromSource(array $arguments)
     {
         $definition = new InputDefinition([
-            new InputOption('version', 'v', InputOption::VALUE_OPTIONAL),
+            new InputOption('fhirversion', 'fv', InputOption::VALUE_OPTIONAL),
         ]);
 
         if (count($arguments) === 0) {

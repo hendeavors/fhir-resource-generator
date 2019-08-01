@@ -60,7 +60,7 @@ class ResourceGenerationCommandTest extends TestCase
         $directory = $this->getOutputDirectory();
 
         $cmd = new ResourceGenerationCommand();
-        $cmd->createOptionalInputFromSource(['--version' => 'foo']);
+        $cmd->createOptionalInputFromSource(['--fhirversion' => 'foo']);
         $cmd->handle();
 
         $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_10)->doesntExist());
@@ -79,7 +79,7 @@ class ResourceGenerationCommandTest extends TestCase
         $directory = $this->getOutputDirectory();
 
         $cmd = new ResourceGenerationCommand();
-        $cmd->createOptionalInputFromSource(['--version' => FhirDefinitionVersionInterface::VERSION_10]);
+        $cmd->createOptionalInputFromSource(['--fhirversion' => FhirDefinitionVersionInterface::VERSION_10]);
         $cmd->handle();
 
         $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_10)->exists());
@@ -98,7 +98,7 @@ class ResourceGenerationCommandTest extends TestCase
         $directory = $this->getOutputDirectory();
 
         $cmd = new ResourceGenerationCommand();
-        $cmd->createOptionalInputFromSource(['--version' => FhirDefinitionVersionInterface::VERSION_20]);
+        $cmd->createOptionalInputFromSource(['--fhirversion' => FhirDefinitionVersionInterface::VERSION_20]);
         $cmd->handle();
 
         $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_10)->doesntExist());
@@ -117,7 +117,7 @@ class ResourceGenerationCommandTest extends TestCase
         $directory = $this->getOutputDirectory();
 
         $cmd = new ResourceGenerationCommand();
-        $cmd->createOptionalInputFromSource(['--version' => FhirDefinitionVersionInterface::VERSION_30]);
+        $cmd->createOptionalInputFromSource(['--fhirversion' => FhirDefinitionVersionInterface::VERSION_30]);
         $cmd->handle();
 
         $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_10)->doesntExist());
@@ -136,7 +136,7 @@ class ResourceGenerationCommandTest extends TestCase
         $directory = $this->getOutputDirectory();
 
         $cmd = new ResourceGenerationCommand();
-        $cmd->createOptionalInputFromSource(['--version' => FhirDefinitionVersionInterface::VERSION_40]);
+        $cmd->createOptionalInputFromSource(['--fhirversion' => FhirDefinitionVersionInterface::VERSION_40]);
         $cmd->handle();
 
         $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_10)->doesntExist());
@@ -155,7 +155,7 @@ class ResourceGenerationCommandTest extends TestCase
         $directory = $this->getOutputDirectory();
 
         $cmd = new ResourceGenerationCommand();
-        $cmd->createOptionalInputFromSource(['--version' => FhirDefinitionVersionInterface::VERSION_BUILD]);
+        $cmd->createOptionalInputFromSource(['--fhirversion' => FhirDefinitionVersionInterface::VERSION_BUILD]);
         $cmd->handle();
 
         $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_10)->doesntExist());
