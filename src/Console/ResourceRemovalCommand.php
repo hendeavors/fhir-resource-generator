@@ -117,6 +117,6 @@ class ResourceRemovalCommand extends Command
         . DIRECTORY_SEPARATOR
         . 'output'
         . DIRECTORY_SEPARATOR
-        . FhirClassGenerator::GENERATOR_NAMESPACE;
+        . str_replace('\\', DIRECTORY_SEPARATOR, rtrim(FhirClassGenerator::GENERATOR_NAMESPACE, "/\\")) . DIRECTORY_SEPARATOR;
     }
 }
