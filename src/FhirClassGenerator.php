@@ -10,6 +10,7 @@ use Throwable;
 use Endeavors\Fhir\GeneratorException;
 use Endeavors\Fhir\GeneratorResponse;
 use Endeavors\Fhir\Support\Contracts\ZipExtractionInterface;
+use Endeavors\Fhir\InvalidSourceDirectoryException;
 use Endeavors\Fhir\Support\Directory;
 use Endeavors\Fhir\Server;
 
@@ -25,11 +26,11 @@ class FhirClassGenerator
 
     public function __construct(string $directory)
     {
-        // the path where the files were unzipped
+        // the path(source) where the files were unzipped
         $this->directory = Directory::create($directory);
 
         if ($this->directory->doesntExist()) {
-            throw InvalidDestinationDirectoryException::invalidDestinationDirectoryPath($this->directory);
+            throw InvalidSourceDirectoryException::invalidSourceDirectoryPath($this->directory);
         }
 
         $this->destinationDirectory = Directory::create(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'output');
@@ -75,11 +76,11 @@ class FhirClassGenerator
                 $this->generator->generate();
                 $message = 'Generator task completed successfully for ' . $this->directory->name() . '.';
             } catch (RuntimeException $e) {
-                $ex = new GeneratorException($e->getMessage());
+                $ex = new GeneratorException(sprintf("%s: %s", "Runtime Exception", $e->getMessage()));
             } catch (Exception $e) {
-                $ex = new GeneratorException($e->getMessage());
+                $ex = new GeneratorException(sprintf("%s: %s", "General Exception", $e->getMessage()));
             } catch (Throwable $e) {
-                $ex = new GeneratorException($e->getMessage());
+                $ex = new GeneratorException(sprintf("%s: %s", "Fatal Error", $e->getMessage()));
             }
         }
 
