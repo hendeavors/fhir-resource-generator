@@ -10,3 +10,4 @@ output*
 /.idea
 /.vscode
 Thumbs.db
+/phpunit.xml
