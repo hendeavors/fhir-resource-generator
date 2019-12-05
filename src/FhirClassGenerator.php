@@ -2,11 +2,11 @@
 
 namespace Endeavors\Fhir;
 
-use Endeavors\Fhir\Support\XsdFileExtractor;
-use DCarbone\PHPFHIR\ClassGenerator\Generator;
 use RuntimeException;
 use Exception;
 use Throwable;
+use Endeavors\Fhir\FilesystemConfiguration;
+use DCarbone\PHPFHIR\ClassGenerator\Generator;
 use Endeavors\Fhir\GeneratorException;
 use Endeavors\Fhir\GeneratorResponse;
 use Endeavors\Fhir\Support\Contracts\ZipExtractionInterface;
@@ -33,7 +33,7 @@ class FhirClassGenerator
             throw InvalidSourceDirectoryException::invalidSourceDirectoryPath($this->directory);
         }
 
-        $this->destinationDirectory = Directory::create(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'output');
+        $this->destinationDirectory = Directory::create(FilesystemConfiguration::rootOutputDirectory());
 
         $this->destinationDirectory->make();
 

@@ -4,6 +4,7 @@ namespace Endeavors\Fhir\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Endeavors\Fhir\Console\ResourceGenerationCommand;
+use Endeavors\Fhir\Console\ResourceRemovalCommand;
 use Endeavors\Fhir\Support\Directory;
 use Endeavors\Fhir\Contracts\FhirDefinitionVersionInterface;
 
@@ -186,6 +187,6 @@ class ResourceGenerationCommandTest extends TestCase
     protected function tearDown()
     {
         Directory::create(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'input')->remove();
-        Directory::create(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'output')->remove();
+        (new ResourceRemovalCommand)->handle();
     }
 }
