@@ -110,6 +110,6 @@ class ResourceRemovalCommand extends Command
 
     protected function getRootOutputDirectory()
     {
-        return FilesystemConfiguration::outputDirectory();;
+        return FilesystemConfiguration::outputDirectory();
     }
 }
