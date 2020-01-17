@@ -37,7 +37,9 @@ final class FilesystemConfiguration
     }
 
     /**
-     * @return string The root output directory
+     * The root input directory
+     * 
+     * @return string
      */
     public static function rootInputDirectory(): string
     {
