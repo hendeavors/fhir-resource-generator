@@ -33,6 +33,11 @@ class RemoteFile
      */
     public function download(File $file)
     {
+        if ($file->exists() && $file->directory($file->name())->doesntExist()) {
+            $file->directory($file->name())->make();
+
+            return $file->get();
+        }
         // don't re-download the file
         if ($file->exists()) {
             return $file->get();
