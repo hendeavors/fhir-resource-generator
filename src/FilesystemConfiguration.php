@@ -35,4 +35,25 @@ final class FilesystemConfiguration
             static::namespaceOutputDirectory()
         );
     }
+
+    /**
+     * The root input directory
+     * 
+     * @return string
+     */
+    public static function rootInputDirectory(): string
+    {
+        return sprintf('%s%s..%2$sinput',
+            __DIR__,
+            DIRECTORY_SEPARATOR
+        );
+    }
+
+    public static function inputDirectory()
+    {
+        return sprintf("%s%s",
+            static::rootInputDirectory(),
+            DIRECTORY_SEPARATOR
+        );
+    }
 }
