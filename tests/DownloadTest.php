@@ -19,7 +19,19 @@ class DownloadTest extends TestCase
         $this->assertTrue(class_exists('Endeavors\HL7\Fhir\DSTU2\PHPFHIRResponseParser'));
         $this->assertTrue(class_exists('Endeavors\HL7\Fhir\STU3\PHPFHIRResponseParser'));
         $this->assertTrue(class_exists('Endeavors\HL7\Fhir\R4\PHPFHIRResponseParser'));
-        $this->assertTrue(class_exists('Endeavors\HL7\Fhir\BUILD\PHPFHIRResponseParser'));
+    }
+
+    /**
+     * @test
+     */
+    public function buildDownload()
+    {
+        FhirDefinition::downloadBuild();
+
+        $this->assertTrue(class_exists('Endeavors\HL7\Fhir\DSTU1\PHPFHIRResponseParser'));
+        $this->assertTrue(class_exists('Endeavors\HL7\Fhir\DSTU2\PHPFHIRResponseParser'));
+        $this->assertTrue(class_exists('Endeavors\HL7\Fhir\STU3\PHPFHIRResponseParser'));
+        $this->assertTrue(class_exists('Endeavors\HL7\Fhir\R4\PHPFHIRResponseParser'));
     }
 
     /**
@@ -33,7 +45,6 @@ class DownloadTest extends TestCase
         $this->assertTrue(class_exists('Endeavors\HL7\Fhir\DSTU2\PHPFHIRResponseParser'));
         $this->assertTrue(class_exists('Endeavors\HL7\Fhir\STU3\PHPFHIRResponseParser'));
         $this->assertTrue(class_exists('Endeavors\HL7\Fhir\R4\PHPFHIRResponseParser'));
-        $this->assertTrue(class_exists('Endeavors\HL7\Fhir\BUILD\PHPFHIRResponseParser'));
     }
 
     protected function tearDown()
