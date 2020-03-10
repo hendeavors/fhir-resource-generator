@@ -2,11 +2,12 @@
 
 namespace Endeavors\Fhir\Support;
 
-use Chumper\Zipper\Zipper as BaseZipper;
 use Exception;
+use RuntimeException;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Illuminate\Filesystem\Filesystem;
 use Endeavors\Fhir\Support\ZipRepository;
-use Illuminate\Support\Str;
 
 class Zipper
 {
@@ -150,7 +151,7 @@ class Zipper
     public function extractTo($path, array $files = [], $methodFlags = self::BLACKLIST)
     {
         if (!$this->file->exists($path) && !$this->file->makeDirectory($path, 0755, true)) {
-            throw new \RuntimeException('Failed to create folder');
+            throw new RuntimeException('Failed to create folder');
         }
 
         if ($methodFlags & self::EXACT_MATCH) {
@@ -185,7 +186,7 @@ class Zipper
     public function extractMatchingRegex($extractToPath, $regex)
     {
         if (empty($regex)) {
-            throw new \InvalidArgumentException('Missing pass valid regex parameter');
+            throw new InvalidArgumentException('Missing pass valid regex parameter');
         }
 
         $this->extractFilesInternal($extractToPath, function ($filename) use ($regex) {
@@ -196,7 +197,7 @@ class Zipper
                 //invalid pattern for preg_match raises E_WARNING and returns FALSE
                 //so if you have custom error_handler set to catch and throw E_WARNINGs you never end up here
                 //but if you have not - this will throw exception
-                throw new \RuntimeException("regular expression match on '$filename' failed with error. Please check if pattern is valid regular expression.");
+                throw new RuntimeException("regular expression match on '$filename' failed with error. Please check if pattern is valid regular expression.");
             }
 
             return false;
@@ -467,7 +468,7 @@ class Zipper
                 if ($match === 1) {
                     $filesList[] = $file;
                 } elseif ($match === false) {
-                    throw new \RuntimeException("regular expression match on '$file' failed with error. Please check if pattern is valid regular expression.");
+                    throw new RuntimeException("regular expression match on '$file' failed with error. Please check if pattern is valid regular expression.");
                 }
             };
         } else {
@@ -494,8 +495,6 @@ class Zipper
         return $this->currentFolder;
     }
 
-    //---------------------PRIVATE FUNCTIONS-------------
-
     /**
      * @param $pathToZip
      *
@@ -508,7 +507,7 @@ class Zipper
         if (!$this->file->exists($pathToZip)) {
             $dirname = dirname($pathToZip);
             if (!$this->file->exists($dirname) && !$this->file->makeDirectory($dirname, 0755, true)) {
-                throw new \RuntimeException('Failed to create folder');
+                throw new RuntimeException('Failed to create folder');
             } elseif (!$this->file->isWritable($dirname)) {
                 throw new Exception(sprintf('The path "%s" is not writeable', $pathToZip));
             }
@@ -597,7 +596,7 @@ class Zipper
         // We need to create the directory first in case it doesn't exist
         $dir = pathinfo($path.DIRECTORY_SEPARATOR.$tmpPath, PATHINFO_DIRNAME);
         if (!$this->file->exists($dir) && !$this->file->makeDirectory($dir, 0755, true, true)) {
-            throw new \RuntimeException('Failed to create folders');
+            throw new RuntimeException('Failed to create folders');
         }
 
         $toPath = $path.DIRECTORY_SEPARATOR.$tmpPath;

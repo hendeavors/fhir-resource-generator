@@ -3,6 +3,7 @@
 namespace Endeavors\Fhir\Console;
 
 use Illuminate\Console\Command;
+use Endeavors\Fhir\FilesystemConfiguration;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
@@ -73,7 +74,7 @@ class ResourceRemovalCommand extends Command
             Directory::create($this->getRootOutputDirectory() . $version)->remove();
         } elseif (null === $version) {
             Directory::create($this->getRootImportDirectory())->remove();
-            Directory::create($this->getRootOutputDirectory())->remove();
+            Directory::create(FilesystemConfiguration::rootOutputDirectory())->remove();
         } else {
             $this->error("Invalid fhirversion specified");
         }
@@ -109,14 +110,6 @@ class ResourceRemovalCommand extends Command
 
     protected function getRootOutputDirectory()
     {
-        return __DIR__
-        . DIRECTORY_SEPARATOR
-        . '..'
-        . DIRECTORY_SEPARATOR
-        . '..'
-        . DIRECTORY_SEPARATOR
-        . 'output'
-        . DIRECTORY_SEPARATOR
-        . str_replace('\\', DIRECTORY_SEPARATOR, rtrim(FhirClassGenerator::GENERATOR_NAMESPACE, "/\\")) . DIRECTORY_SEPARATOR;
+        return FilesystemConfiguration::outputDirectory();
     }
 }

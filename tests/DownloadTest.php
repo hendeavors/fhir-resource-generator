@@ -5,6 +5,7 @@ namespace Endeavors\Fhir\Test;
 use PHPUnit\Framework\TestCase;
 use Endeavors\Fhir\FhirDefinition;
 use Endeavors\Fhir\Support\Directory;
+use Endeavors\Fhir\Console\ResourceRemovalCommand;
 
 class DownloadTest extends TestCase
 {
@@ -39,6 +40,6 @@ class DownloadTest extends TestCase
     protected function tearDown()
     {
         Directory::create(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'input')->remove();
-        Directory::create(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'output')->remove();
+        (new ResourceRemovalCommand)->handle();
     }
 }
