@@ -38,7 +38,7 @@ class RemoteFile
 
             return $file->get();
         }
-        
+
         // don't re-download the file
         if ($file->exists()) {
             return $file->get();

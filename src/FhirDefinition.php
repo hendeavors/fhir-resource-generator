@@ -24,12 +24,15 @@ class FhirDefinition implements FhirDefinitionVersionInterface
             self::VERSION_20  => ['url' => FhirDefinitionVersionLocationInterface::VERSION_20],
             self::VERSION_30   => ['url' => FhirDefinitionVersionLocationInterface::VERSION_30],
             self::VERSION_40     => ['url' => FhirDefinitionVersionLocationInterface::VERSION_40],
-            self::VERSION_BUILD  => ['url' => FhirDefinitionVersionLocationInterface::VERSION_BUILD]
         ]
     ];
 
     public static function download(string $downloadVersion = null, OutputInterface $output = null)
     {
+        if ($downloadVersion === self::VERSION_BUILD) {
+            return;
+        }
+        
         $versions = static::$definitions['versions'] ?? [];
 
         if (null !== $downloadVersion) {

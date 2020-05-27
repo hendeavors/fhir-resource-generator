@@ -25,7 +25,6 @@ class GeneratesWithoutInputDirectoryTest extends TestCase
         Directory::create($directory . FhirDefinitionVersionInterface::VERSION_20)->remove();
         Directory::create($directory . FhirDefinitionVersionInterface::VERSION_30)->remove();
         Directory::create($directory . FhirDefinitionVersionInterface::VERSION_40)->remove();
-        Directory::create($directory . FhirDefinitionVersionInterface::VERSION_BUILD)->remove();
 
         $cmd = new ResourceGenerationCommand();
         $cmd->handle();
@@ -34,6 +33,5 @@ class GeneratesWithoutInputDirectoryTest extends TestCase
         $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_20)->exists());
         $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_30)->exists());
         $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_40)->exists());
-        $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_BUILD)->exists());
     }
 }

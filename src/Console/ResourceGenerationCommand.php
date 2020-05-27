@@ -66,8 +66,6 @@ class ResourceGenerationCommand extends Command
             FhirDefinition::downloadSTU3($this->output);
         } elseif ($version === FhirDefinition::VERSION_40) {
             FhirDefinition::downloadR4($this->output);
-        } elseif ($version === FhirDefinition::VERSION_BUILD) {
-            FhirDefinition::downloadBuild($this->output);
         } elseif (null === $version) {
             FhirDefinition::downloadFromConsole();
         } else {
