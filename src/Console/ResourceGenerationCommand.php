@@ -71,6 +71,8 @@ class ResourceGenerationCommand extends Command
         } else {
             $this->error("Invalid fhirversion specified");
         }
+
+        return 0;
     }
 
     /**

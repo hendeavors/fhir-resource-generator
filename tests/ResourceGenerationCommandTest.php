@@ -24,7 +24,9 @@ class ResourceGenerationCommandTest extends TestCase
         $directory = FilesystemConfiguration::outputDirectory();
 
         $cmd = new ResourceGenerationCommand();
-        $cmd->handle();
+        $result = $cmd->handle();
+
+        $this->assertSame(0, $result);
 
         $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_10)->exists());
         $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_20)->exists());

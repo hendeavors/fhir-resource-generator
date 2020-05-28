@@ -24,7 +24,9 @@ class AllResourceRemovalCommandTest extends TestCase
         $directory = $this->getOutputDirectory();
 
         $cmd = new ResourceRemovalCommand;
-        $cmd->handle();
+        $result = $cmd->handle();
+
+        $this->assertSame(0, $result);
 
         $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_10)->doesntExist());
         $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_20)->doesntExist());
