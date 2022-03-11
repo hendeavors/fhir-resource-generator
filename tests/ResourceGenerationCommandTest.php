@@ -11,10 +11,6 @@ use Endeavors\Fhir\Contracts\FhirDefinitionVersionInterface;
 
 class ResourceGenerationCommandTest extends TestCase
 {
-    protected function setUp()
-    {
-    }
-
     /**
      * If no version option is supplied all versions should download
      * @test
@@ -159,7 +155,7 @@ class ResourceGenerationCommandTest extends TestCase
         $this->assertTrue(Directory::create($directory . FhirDefinitionVersionInterface::VERSION_40)->doesntExist());
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Directory::create(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'input')->remove();
         (new ResourceRemovalCommand)->handle();

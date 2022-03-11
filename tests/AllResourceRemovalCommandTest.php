@@ -10,7 +10,7 @@ use Endeavors\Fhir\Contracts\FhirDefinitionVersionInterface;
 
 class AllResourceRemovalCommandTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         FhirDefinition::downloadFromConsole();
     }

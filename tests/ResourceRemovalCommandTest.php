@@ -10,7 +10,7 @@ use Endeavors\Fhir\FhirDefinition;
 
 class ResourceRemovalCommandTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         FhirDefinition::downloadFromConsole();
     }

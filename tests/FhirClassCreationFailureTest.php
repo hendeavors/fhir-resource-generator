@@ -9,28 +9,27 @@ use Endeavors\Fhir\Support\Directory;
 
 class FhirClassCreationFailureTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         Directory::create('somebogusdestinationdirectory')->remove();
     }
 
     /**
      * @test
-     * @expectedException \Endeavors\Fhir\InvalidSourceFileException
      */
     public function createFromZip()
     {
         $extractor = CompressedFile::create();
-
+        $this->expectException(\Endeavors\Fhir\InvalidSourceFileException::class);
         FhirClassGenerator::fromZip($extractor, 'somebogussourcefile');
     }
 
     /**
      * @test
-     * @expectedException \Endeavors\Fhir\InvalidSourceDirectoryException
      */
     public function createFromPath()
     {
+        $this->expectException(\Endeavors\Fhir\InvalidSourceDirectoryException::class);
         FhirClassGenerator::create('somebogusdestinationdirectory');
     }
 
@@ -43,6 +42,6 @@ class FhirClassCreationFailureTest extends TestCase
         $directory->make();
         $result = FhirClassGenerator::create($directory->get())->generate();
 
-        $this->assertContains('Runtime Exception', (string)$result);
+        $this->assertStringContainsString('Runtime Exception', (string)$result);
     }
 }

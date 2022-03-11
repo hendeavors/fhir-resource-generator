@@ -13,7 +13,7 @@ class ZipExtractionSourceDirectoryTest extends TestCase
 
     private $sourceDirectoryToNotRecreate;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->sourceDirectoryToCreate = uniqid("sd_", true);
         $this->sourceDirectoryToNotRecreate = 'shouldnotberecreated';
@@ -55,7 +55,7 @@ class ZipExtractionSourceDirectoryTest extends TestCase
         $this->assertFalse($path->make());
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Directory::create($this->sourceDirectoryToCreate)->remove();
         Directory::create($this->sourceDirectoryToNotRecreate)->remove();

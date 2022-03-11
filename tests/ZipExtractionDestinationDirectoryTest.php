@@ -13,7 +13,7 @@ class ZipExtractionDestinationDirectoryTest extends TestCase
 
     private $destinationDirectoryToNotRecreate;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->destinationDirectoryToCreate = uniqid("dd_", true);
         $this->destinationDirectoryToNotRecreate = 'destinationshouldnotberecreated';
@@ -55,7 +55,7 @@ class ZipExtractionDestinationDirectoryTest extends TestCase
         $this->assertFalse($path->make());
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Directory::create($this->destinationDirectoryToCreate)->remove();
         Directory::create($this->destinationDirectoryToNotRecreate)->remove();

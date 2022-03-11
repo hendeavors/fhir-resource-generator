@@ -49,7 +49,7 @@ class DownloadTest extends TestCase
         $this->assertTrue(class_exists('Endeavors\HL7\Fhir\R4\PHPFHIRResponseParser'));
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Directory::create(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'input')->remove();
         (new ResourceRemovalCommand)->handle();

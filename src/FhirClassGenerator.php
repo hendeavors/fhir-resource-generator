@@ -13,6 +13,7 @@ use Endeavors\Fhir\Support\Contracts\ZipExtractionInterface;
 use Endeavors\Fhir\InvalidSourceDirectoryException;
 use Endeavors\Fhir\Support\Directory;
 use Endeavors\Fhir\Server;
+use Endeavors\Fhir\Extension\Config;
 
 class FhirClassGenerator
 {
@@ -26,6 +27,7 @@ class FhirClassGenerator
 
     public function __construct(string $directory)
     {
+
         // the path(source) where the files were unzipped
         $this->directory = Directory::create($directory);
 
@@ -37,7 +39,9 @@ class FhirClassGenerator
 
         $this->destinationDirectory->make();
 
-        $config = new \DCarbone\PHPFHIR\ClassGenerator\Config([
+        
+
+        $config = new Config([
             'xsdPath' => $this->directory,
             'outputPath' => $this->destinationDirectory,
             'outputNamespace' => self::GENERATOR_NAMESPACE . $this->directory->name()
